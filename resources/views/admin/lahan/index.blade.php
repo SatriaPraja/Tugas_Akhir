@@ -154,19 +154,16 @@
                                                 </path>
                                             </svg>
                                         </button>
-                                        <form method="POST" action="{{ route('admin.lahan.delete', $item->id) }}"
-                                            class="inline">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Hapus data lahan ini?')"
-                                                class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                    </path>
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        {{-- Tombol Hapus (Panggil Modal) --}}
+                                        <button
+                                            onclick="openDeleteModal('{{ $item->nop }} - {{ $item->nama }}', '{{ route('admin.lahan.delete', $item->id) }}')"
+                                            class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -183,44 +180,37 @@
         </div>
     </div>
 
-    <script>
-        function openEditModal(data) {
-            document.getElementById('editForm').action = `/admin/lahan/update/${data.id}`;
-            document.getElementById('editNama').value = data.nama;
-            document.getElementById('editNop').value = data.nop;
-            document.getElementById('editLuas').value = data.luas;
-            document.getElementById('editJenis').value = data.jenis_tanah;
-            document.getElementById('editPanen').value = data.estimasi_panen;
-            document.getElementById('editUrea').value = data.urea ?? 0;
-            document.getElementById('editNpk').value = data.npk ?? 0;
 
-            // Logika menampilkan teks klaster secara dinamis
-            const klasterNames = {
-                1: 'Kecil',
-                2: 'Sedang',
-                3: 'Besar'
-            };
-            const klasterText = klasterNames[data.klaster] || 'N/A';
-
-            // Set nilai ke input hidden agar tetap tersimpan ke DB
-            document.getElementById('editKlaster').value = data.klaster;
-
-            // Tampilkan teks ke user
-            document.getElementById('displayKlaster').innerText = `Kategori: ${klasterText}`;
-
-            document.getElementById('editModal').classList.remove('hidden');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
-        }
-    </script>
+    <div id="deleteModal"
+        class="fixed inset-0 z-[100] hidden overflow-y-auto bg-gray-900/50 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 text-center">
+            <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                    </path>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Hapus Data Lahan?</h2>
+            <p class="text-gray-500 mb-8">Apakah Anda yakin menghapus <span id="deleteFileName"
+                    class="font-bold text-gray-800"></span>?</p>
+            <form id="deleteForm" method="POST">
+                @csrf @method('DELETE')
+                <div class="flex space-x-3">
+                    <button type="button" onclick="closeDeleteModal()"
+                        class="flex-1 px-4 py-3 border border-gray-200 text-gray-500 rounded-xl font-bold hover:bg-gray-50 transition-all">Batal</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-lg transition-all">Ya,
+                        Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
         <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity"></div>
 
         <div class="relative min-h-screen flex items-center justify-center p-6">
-            <div
-                class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden ">
+            <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden ">
 
                 <div class="bg-blue-600 px-8 py-5 border-b-2 border-blue-700">
                     <h3 class="text-xl font-bold text-white tracking-wide">Edit Data Lahan & Pupuk</h3>
@@ -327,4 +317,56 @@
             </div>
         </div>
     </div>
+    <script>
+        // Inisialisasi variabel di dalam fungsi agar tidak error jika elemen belum dimuat
+        function openDeleteModal(name, url) {
+            const dModal = document.getElementById('deleteModal');
+            const dForm = document.getElementById('deleteForm');
+            const dFileName = document.getElementById('deleteFileName');
+
+            dFileName.innerText = name;
+            dForm.action = url;
+            dModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openEditModal(data) {
+            const editModal = document.getElementById('editModal');
+            document.getElementById('editForm').action = `/admin/lahan/update/${data.id}`;
+            document.getElementById('editNama').value = data.nama;
+            document.getElementById('editNop').value = data.nop;
+            document.getElementById('editLuas').value = data.luas;
+            document.getElementById('editJenis').value = data.jenis_tanah;
+            document.getElementById('editPanen').value = data.estimasi_panen;
+            document.getElementById('editUrea').value = data.urea ?? 0;
+            document.getElementById('editNpk').value = data.npk ?? 0;
+
+            const klasterNames = {
+                1: 'Kecil',
+                2: 'Sedang',
+                3: 'Besar'
+            };
+            document.getElementById('editKlaster').value = data.klaster;
+            document.getElementById('displayKlaster').innerText = `Kategori: ${klasterNames[data.klaster] || 'N/A'}`;
+
+            editModal.classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        // Close modal on click outside
+        window.onclick = function(event) {
+            const dModal = document.getElementById('deleteModal');
+            const eModal = document.getElementById('editModal');
+            if (event.target == dModal) closeDeleteModal();
+            if (event.target == eModal) closeEditModal();
+        }
+    </script>
 @endsection
