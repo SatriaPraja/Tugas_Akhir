@@ -35,8 +35,21 @@ class LahanController extends Controller
     public function update(Request $request, $id)
     {
         $lahan = Lahan::findOrFail($id);
-        $lahan->update($request->only(['nama', 'nop', 'luas', 'jenis_tanah', 'estimasi_panen', 'klaster']));
-        return redirect()->back()->with('success', 'Data berhasil diperbarui');
+
+        // Tambahkan 'urea' dan 'npk' ke dalam array only()
+        $lahan->update($request->only([
+            'nama',
+            'nop',
+            'luas',
+            'jenis_tanah',
+            'estimasi_panen',
+            'produktivitas', // Tambahkan ini jika di view ada inputnya
+            'klaster',
+            'urea', // Kolom baru
+            'npk'   // Kolom baru
+        ]));
+
+        return redirect()->back()->with('success', 'Data lahan dan pupuk berhasil diperbarui');
     }
 
     public function destroy($id)

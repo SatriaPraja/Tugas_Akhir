@@ -9,7 +9,7 @@ class Lahan extends Model
     protected $table = 'lahan';
 
     protected $fillable = [
-        'id','nop', 'nama', 'luas', 'klaster', 'estimasi_panen', 'produktivitas',
+        'id','nop', 'nama', 'luas', 'klaster', 'estimasi_panen', 'produktivitas','urea', 'npk',
         'jenis_tanah', 'lat', 'lon', 'polygon',
     ];
 }

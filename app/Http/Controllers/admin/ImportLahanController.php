@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lahan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File; // Gunakan File untuk manajemen folder
+use Illuminate\Support\Facades\File;
 
 class ImportLahanController extends Controller
 {
@@ -24,16 +24,21 @@ class ImportLahanController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:5120',
+            // Hapus 'txt', sisakan 'csv' saja
+            'csv_file' => 'required|file|mimes:csv|max:5120',
+        ], [
+            'csv_file.required' => 'Silakan pilih file terlebih dahulu.',
+            'csv_file.file'     => 'Input harus berupa file.',
+            'csv_file.mimes'    => 'Format file harus berupa .csv. File format lain tidak diizinkan.',
+            'csv_file.max'      => 'Ukuran file maksimal adalah 5MB.',
         ]);
 
         // Simpan file
-        $request->file('csv_file')->storeAs(
-            'csv',
-            $request->file('csv_file')->getClientOriginalName()
-        );
+        $file = $request->file('csv_file');
+        $fileName = $file->getClientOriginalName();
+        $file->storeAs('csv', $fileName);
 
-        return back()->with('success', 'File CSV berhasil diupload!');
+        return back()->with('success', 'File CSV berhasil diunggah!');
     }
 
     // Melakukan proses import data
@@ -68,6 +73,8 @@ class ImportLahanController extends Controller
                         'klaster'        => $data['klaster'] ?? 0,
                         'estimasi_panen' => $data['estimasi_panen'] ?? 0,
                         'produktivitas'  => $data['produktivitas'] ?? 0,
+                        'urea'  => $data['urea'] ?? 0,
+                        'npk'  => $data['npk'] ?? 0,
                         'jenis_tanah'    => $data['jenis_tanah'] ?? '-',
                         'lat'            => isset($data['lat']) ? $this->fixCoord($data['lat']) : null,
                         'lon'            => isset($data['lon']) ? $this->fixCoord($data['lon']) : null,

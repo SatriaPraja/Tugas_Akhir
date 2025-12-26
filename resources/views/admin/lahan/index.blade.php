@@ -13,12 +13,15 @@
             <div class="flex flex-col items-end space-y-3">
 
                 <form action="{{ request()->url() }}" method="GET" class="flex items-center space-x-3">
+                    {{-- Tombol Reset/Kembali - Hanya muncul jika ada filter atau pencarian --}}
+
+
                     <select name="filter_klaster" onchange="this.form.submit()"
                         class="bg-white border border-gray-200 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
                         <option value="">Semua Klaster</option>
-                        <option value="0" {{ request('filter_klaster') == '0' ? 'selected' : '' }}>Kecil</option>
+                        <option value="1" {{ request('filter_klaster') == '1' ? 'selected' : '' }}>Kecil</option>
                         <option value="2" {{ request('filter_klaster') == '2' ? 'selected' : '' }}>Sedang</option>
-                        <option value="1" {{ request('filter_klaster') == '1' ? 'selected' : '' }}>Besar</option>
+                        <option value="3" {{ request('filter_klaster') == '3' ? 'selected' : '' }}>Besar</option>
                     </select>
 
                     <div class="relative">
@@ -32,6 +35,17 @@
                             </svg>
                         </div>
                     </div>
+                    @if (request('search') || request('filter_klaster'))
+                        <a href="{{ request()->url() }}"
+                            class="bg-blue-600 text-white p-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center"
+                            title="Kembali ke semua data">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                        </a>
+                    @endif
                 </form>
             </div>
         </div>
@@ -64,6 +78,9 @@
                                 Produktivitas</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Est.
                                 Panen</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">
+                                Pupuk
+                            </th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Klaster
                             </th>
                             <th class="px-6 py-4 text-center text-xs font-bold text-blue-900 uppercase tracking-wider">Aksi
@@ -95,18 +112,35 @@
                                     {{ $item->estimasi_panen }}
                                     <span class="text-xs text-gray-400">Kg</span>
                                 </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    <div class="flex flex-col">
+                                        <span class="font-semibold text-blue-700">Urea: {{ $item->urea ?? 0 }} <small
+                                                class="text-gray-400">Kg</small></span>
+                                        <span class="font-semibold text-green-700">NPK: {{ $item->npk ?? 0 }} <small
+                                                class="text-gray-400">Kg</small></span>
+                                    </div>
+                                </td>
+                                {{-- PERBAIKAN WARNA KLASTER --}}
                                 <td class="px-6 py-4">
                                     @php
-                                        $klasterColor = [
-                                            'Kecil' => 'bg-emerald-100 text-emerald-700',
-                                            'Sedang' => 'bg-blue-100 text-blue-700',
-                                            'Besar' => 'bg-purple-100 text-purple-700',
-                                        ];
+                                        // Pemetaan Label
                                         $labels = [1 => 'Kecil', 2 => 'Sedang', 3 => 'Besar'];
                                         $label = $labels[$item->klaster] ?? 'N/A';
+
+                                        // Pemetaan Warna sesuai permintaan Anda
+                                        $bgColor = '#gray-100';
+                                        if ($item->klaster == 1) {
+                                            $bgColor = '#44aa44';
+                                        } // Hijau
+                                        if ($item->klaster == 2) {
+                                            $bgColor = '#facc15';
+                                        } // Kuning
+                                        if ($item->klaster == 3) {
+                                            $bgColor = '#f56565';
+                                        } // Merah
                                     @endphp
-                                    <span
-                                        class="px-3 py-1 rounded-full text-xs font-bold {{ $klasterColor[$label] ?? 'bg-gray-100 text-gray-600' }}">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
+                                        style="background-color: {{ $bgColor }};">
                                         {{ $label }}
                                     </span>
                                 </td>
@@ -138,7 +172,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-gray-500">Data lahan tidak ditemukan.
+                                <td colspan="8" class="px-6 py-12 text-center text-gray-500">Data lahan tidak
+                                    ditemukan.
                                 </td>
                             </tr>
                         @endforelse
@@ -156,11 +191,22 @@
             document.getElementById('editLuas').value = data.luas;
             document.getElementById('editJenis').value = data.jenis_tanah;
             document.getElementById('editPanen').value = data.estimasi_panen;
+            document.getElementById('editUrea').value = data.urea ?? 0;
+            document.getElementById('editNpk').value = data.npk ?? 0;
+
+            // Logika menampilkan teks klaster secara dinamis
+            const klasterNames = {
+                1: 'Kecil',
+                2: 'Sedang',
+                3: 'Besar'
+            };
+            const klasterText = klasterNames[data.klaster] || 'N/A';
+
+            // Set nilai ke input hidden agar tetap tersimpan ke DB
             document.getElementById('editKlaster').value = data.klaster;
 
-            if (document.getElementById('editProduktivitas')) {
-                document.getElementById('editProduktivitas').value = data.produktivitas;
-            }
+            // Tampilkan teks ke user
+            document.getElementById('displayKlaster').innerText = `Kategori: ${klasterText}`;
 
             document.getElementById('editModal').classList.remove('hidden');
         }
@@ -169,4 +215,116 @@
             document.getElementById('editModal').classList.add('hidden');
         }
     </script>
+    <div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="relative min-h-screen flex items-center justify-center p-6">
+            <div
+                class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden ">
+
+                <div class="bg-blue-600 px-8 py-5 border-b-2 border-blue-700">
+                    <h3 class="text-xl font-bold text-white tracking-wide">Edit Data Lahan & Pupuk</h3>
+                    <p class="text-blue-100 text-xs mt-1">Pastikan data yang dimasukkan sudah sesuai dengan sertifikat
+                        lahan.</p>
+                </div>
+
+                <form id="editForm" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="p-8 space-y-6">
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Nomor
+                                    Objek Pajak (NOP)</label>
+                                <input type="text" id="editNop" name="nop"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Nama
+                                    Pemilik Lahan</label>
+                                <input type="text" id="editNama" name="nama"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Luas
+                                    Lahan (m²)</label>
+                                <input type="number" id="editLuas" name="luas"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Jenis
+                                    Tanah</label>
+                                <input type="text" id="editJenis" name="jenis_tanah"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-blue-50 rounded-2xl border-2 border-blue-200 shadow-sm space-y-4">
+                            <h4 class="text-blue-800 text-sm font-bold flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z">
+                                    </path>
+                                </svg>
+                                Pupuk Yang Diperoleh
+                            </h4>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-600 uppercase mb-1">Dosis
+                                        Urea</label>
+                                    <input type="number" id="editUrea" name="urea"
+                                        class="block w-full border-2 border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base font-semibold py-2.5 px-4 bg-white shadow-inner">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-green-600 uppercase mb-1">Dosis
+                                        NPK</label>
+                                    <input type="number" id="editNpk" name="npk"
+                                        class="block w-full border-2 border-green-200 rounded-lg focus:ring-green-500 focus:border-green-500 text-base font-semibold py-2.5 px-4 bg-white shadow-inner">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6 items-center">
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Est.
+                                    Hasil Panen (Kg)</label>
+                                <input type="number" id="editPanen" name="estimasi_panen"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all font-bold text-blue-700 bg-gray-50/50">
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-xl border-2 border-dashed border-gray-300">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kategori
+                                    Klaster</label>
+                                <input type="hidden" id="editKlaster" name="klaster">
+                                <div id="displayKlaster" class="text-lg font-black text-gray-700 mt-1"></div>
+                                <span class="text-[9px] text-gray-400 leading-tight italic">Sistem mengunci klaster
+                                    ini.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-8 py-6 flex justify-end space-x-4 border-t-2 border-gray-200/50">
+                        <button type="button" onclick="closeEditModal()"
+                            class="px-6 py-3 bg-red-50 text-red-600 border-2 border-red-100 text-sm font-bold rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 active:scale-95">
+                            Batal
+                        </button>
+
+                        <button type="submit"
+                            class="px-10 py-3 bg-blue-600 text-white text-sm font-black rounded-xl hover:bg-blue-700 hover:shadow-lg active:transform active:scale-95 transition-all uppercase tracking-widest border-b-4 border-blue-800">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
