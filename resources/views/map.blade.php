@@ -185,36 +185,43 @@
                     const color = getColor(Number(p.klaster));
 
                     // Template Popup saat diklik
-                    layer.bindPopup(`
-        <div style="min-width:220px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-            <div style="display:flex; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                <div style="width:12px; height:12px; background:${color}; border-radius:50%; margin-right:8px;"></div>
-                <b style="font-size:14px; color:#333;">${p.nama || '-'}</b>
-            </div>
-            <div style="font-size:12px; line-height:1.6; color:#666;">
-                <b>NOP:</b> ${p.nop || '-'}<br>
-                <b>Luas:</b> ${p.luas || '-'} m²<br>
-                <b>Tanah:</b> ${jenis}<br>
-                <b>Estimasi Panen:</b> <span style="color:#2d3748; font-weight:bold;">${p.estimasi_panen || '0'} kg</span>
-                
-                <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #ccc;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                        <span><i class="fas fa-flask" style="color:#4a5568;"></i> <b>Urea:</b></span>
-                        <span class="text-blue-600 font-bold">${p.urea || '0'} kg</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span><i class="fas fa-vial" style="color:#4a5568;"></i> <b>NPK:</b></span>
-                        <span class="text-orange-600 font-bold">${p.npk || '0'} kg</span>
-                    </div>
-                </div>
+                    const nop = p.nop || '';
+                    const blok = nop.length >= 18 ? nop.split('.')[4].split('-')[0] : '-';
+                    const nomor = nop.includes('-') ? nop.split('-')[1].split('.')[0] : '-';
 
-               <div style="margin-top:10px; padding:6px 8px; background:${color}; color:white; border-radius:6px; display:block; text-align:center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <b style="text-transform: uppercase; font-size: 10px; opacity: 0.9;">Skala Usaha</b><br>
-    <span style="font-weight: bold; font-size: 13px;">${skala}</span>
-</div>
+                    layer.bindPopup(`
+    <div style="min-width:220px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <div style="display:flex; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+            <div style="width:12px; height:12px; background:${color}; border-radius:50%; margin-right:8px;"></div>
+            <div style="display:flex; flex-direction:column;">
+                <b style="font-size:14px; color:#333;">${p.nama || '-'}</b>
+                <span style="font-size:11px; color:#888;">Blok: ${blok} | No: ${nomor}</span>
             </div>
         </div>
-    `);
+        <div style="font-size:12px; line-height:1.6; color:#666;">
+            <b>NOP:</b> ${nop}<br>
+            <b>Luas:</b> ${p.luas || '-'} m²<br>
+            <b>Tanah:</b> ${jenis}<br>
+            <b>Estimasi Panen:</b> <span style="color:#2d3748; font-weight:bold;">${p.estimasi_panen || '0'} kg</span>
+            
+            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #ccc;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                    <span><i class="fas fa-flask" style="color:#4a5568;"></i> <b>Urea:</b></span>
+                    <span class="text-blue-600 font-bold">${p.urea || '0'} kg</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><i class="fas fa-vial" style="color:#4a5568;"></i> <b>NPK:</b></span>
+                    <span class="text-orange-600 font-bold">${p.npk || '0'} kg</span>
+                </div>
+            </div>
+
+            <div style="margin-top:10px; padding:6px 8px; background:${color}; color:white; border-radius:6px; display:block; text-align:center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <b style="text-transform: uppercase; font-size: 10px; opacity: 0.9;">Skala Usaha</b><br>
+                <span style="font-weight: bold; font-size: 13px;">${skala}</span>
+            </div>
+        </div>
+    </div>
+`);
 
                     // Efek Hover
                     layer.on('mouseover', () => layer.setStyle({

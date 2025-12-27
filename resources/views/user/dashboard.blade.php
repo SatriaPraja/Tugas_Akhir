@@ -105,12 +105,15 @@
     <div class="custom-panel bottom-right-legend">
         <div class="font-bold text-gray-700 text-xs mb-2 border-b pb-1">📍 Legenda</div>
         <div class="space-y-1.5">
-            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600"><span
-                    class="w-3 h-3 rounded-full bg-[#44aa44]"></span> Kecil</div>
-            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600"><span
-                    class="w-3 h-3 rounded-full bg-[#facc15]"></span> Sedang</div>
-            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600"><span
-                    class="w-3 h-3 rounded-full bg-[#f56565]"></span> Besar</div>
+            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600">
+                <span class="w-3 h-3 rounded-full bg-[#44aa44]"></span> Kecil
+            </div>
+            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600">
+                <span class="w-3 h-3 rounded-full bg-[#facc15]"></span> Sedang
+            </div>
+            <div class="flex items-center gap-2 text-[11px] font-bold text-gray-600">
+                <span class="w-3 h-3 rounded-full bg-[#f56565]"></span> Besar
+            </div>
         </div>
     </div>
 
@@ -119,7 +122,84 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Inisialisasi Map & Basemap
+            // 1. Inisialisasi Utility Functions
+            function getColor(k) {
+                const val = Number(k);
+                if (val === 1) return "#44aa44";
+                if (val === 2) return "#facc15";
+                if (val === 3) return "#f56565";
+                return "#777777";
+            }
+
+            function setupFeature(feature, layer) {
+                const p = feature.properties || {};
+
+                // Pemetaan Jenis Tanah
+                const daftarTanah = {
+                    1: "Aluvial Berpasir (1)",
+                    2: "Grumosol (2)",
+                    3: "Latosol Gelap (3)",
+                    4: "Latosol Putih (4)"
+                };
+                const jenis = daftarTanah[Number(p.jenis_tanah)] || "-";
+
+                // Pemetaan Skala Usaha (Fix Undefined)
+                const daftarSkala = {
+                    1: "Kecil",
+                    2: "Sedang",
+                    3: "Besar"
+                };
+                const skala = daftarSkala[Number(p.klaster)] || "Tidak Diketahui";
+                const color = getColor(Number(p.klaster));
+
+                // Template Popup saat diklik
+                const nop = p.nop || '';
+                const blok = nop.length >= 18 ? nop.split('.')[4].split('-')[0] : '-';
+                const nomor = nop.includes('-') ? nop.split('-')[1].split('.')[0] : '-';
+
+                layer.bindPopup(`
+    <div style="min-width:220px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <div style="display:flex; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+            <div style="width:12px; height:12px; background:${color}; border-radius:50%; margin-right:8px;"></div>
+            <div style="display:flex; flex-direction:column;">
+                <b style="font-size:14px; color:#333;">${p.nama || '-'}</b>
+                <span style="font-size:11px; color:#888;">Blok: ${blok} | No: ${nomor}</span>
+            </div>
+        </div>
+        <div style="font-size:12px; line-height:1.6; color:#666;">
+            <b>NOP:</b> ${nop}<br>
+            <b>Luas:</b> ${p.luas || '-'} m²<br>
+            <b>Tanah:</b> ${jenis}<br>
+            <b>Estimasi Panen:</b> <span style="color:#2d3748; font-weight:bold;">${p.estimasi_panen || '0'} kg</span>
+            
+            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #ccc;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                    <span><i class="fas fa-flask" style="color:#4a5568;"></i> <b>Urea:</b></span>
+                    <span class="text-blue-600 font-bold">${p.urea || '0'} kg</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span><i class="fas fa-vial" style="color:#4a5568;"></i> <b>NPK:</b></span>
+                    <span class="text-orange-600 font-bold">${p.npk || '0'} kg</span>
+                </div>
+            </div>
+
+            <div style="margin-top:10px; padding:6px 8px; background:${color}; color:white; border-radius:6px; display:block; text-align:center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <b style="text-transform: uppercase; font-size: 10px; opacity: 0.9;">Skala Usaha</b><br>
+                <span style="font-weight: bold; font-size: 13px;">${skala}</span>
+            </div>
+        </div>
+    </div>
+`);
+
+                // Efek Hover
+                layer.on('mouseover', () => layer.setStyle({
+                    weight: 4,
+                    fillOpacity: 0.8
+                }));
+                layer.on('mouseout', () => geojsonLayer.resetStyle(layer));
+            }
+
+            // 2. Inisialisasi Map & Basemap
             const basemaps = {
                 esri: L.tileLayer(
                     'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -137,6 +217,7 @@
                 layers: [basemaps.esri],
                 zoomControl: true
             }).setView([-7.3, 109.26], 13);
+
             map.zoomControl.setPosition('bottomleft');
 
             let rawGeojsonData = null;
@@ -150,42 +231,7 @@
                 onEachFeature: setupFeature
             }).addTo(map);
 
-            function getColor(k) {
-                const val = Number(k);
-                if (val === 1) return "#44aa44";
-                if (val === 2) return "#facc15";
-                if (val === 3) return "#f56565";
-                return "#777777";
-            }
-
-            function setupFeature(feature, layer) {
-                const p = feature.properties || {};
-                const skala = {
-                    1: "Kecil",
-                    2: "Sedang",
-                    3: "Besar"
-                } [p.klaster] || "Tidak Diketahui";
-                const color = getColor(p.klaster);
-
-                layer.bindPopup(`
-                    <div style="min-width:200px;">
-                        <b style="font-size:14px;">${p.nama || '-'}</b><br>
-                        <small>NOP: ${p.nop || '-'}</small><hr style="margin:5px 0">
-                        <b>Luas:</b> ${p.luas || '-'} m²<br>
-                        <b>Panen:</b> ${p.estimasi_panen || '0'} kg
-                        <div style="margin-top:8px; padding:5px; background:${color}; color:white; border-radius:4px; text-align:center;">
-                            <b>${skala}</b>
-                        </div>
-                    </div>
-                `);
-                layer.on('mouseover', () => layer.setStyle({
-                    weight: 4,
-                    fillOpacity: 0.8
-                }));
-                layer.on('mouseout', () => geojsonLayer.resetStyle(layer));
-            }
-
-            // 2. Fungsi Utama
+            // 3. Fungsi Logika Data
             async function loadFeatures() {
                 try {
                     const res = await fetch('/api/lahan-geojson');
@@ -194,19 +240,6 @@
                 } catch (e) {
                     console.error("Gagal memuat data:", e);
                 }
-            }
-
-            function doSearch() {
-                const term = document.getElementById('search-nop').value.trim().toLowerCase();
-                if (!term) return resetView();
-
-                const filtered = rawGeojsonData.features.filter(f => {
-                    const nop = String(f.properties.nop || "").toLowerCase();
-                    const nama = String(f.properties.nama || "").toLowerCase();
-                    return nop.includes(term) || nama.includes(term);
-                });
-
-                updateMapData(filtered, true);
             }
 
             function updateMapData(features, zoomTo) {
@@ -221,7 +254,6 @@
                         maxZoom: 18
                     });
 
-                    // Auto buka popup jika hanya 1 hasil
                     if (features.length === 1) {
                         setTimeout(() => {
                             const layers = geojsonLayer.getLayers();
@@ -230,8 +262,20 @@
                     }
                 } else {
                     showNotification();
-                    if (rawGeojsonData) geojsonLayer.addData(rawGeojsonData);
+                    if (rawGeojsonData) updateMapData(rawGeojsonData.features, false);
                 }
+            }
+
+            function doSearch() {
+                const term = document.getElementById('search-nop').value.trim().toLowerCase();
+                if (!term) return resetView();
+
+                const filtered = rawGeojsonData.features.filter(f => {
+                    const nop = String(f.properties.nop || "").toLowerCase();
+                    const nama = String(f.properties.nama || "").toLowerCase();
+                    return nop.includes(term) || nama.includes(term);
+                });
+                updateMapData(filtered, true);
             }
 
             function showNotification() {
@@ -250,18 +294,20 @@
                 updateMapData(rawGeojsonData.features, true);
             }
 
-            // 3. Event Listeners
+            // 4. Event Listeners
             document.getElementById('btn-search').addEventListener('click', doSearch);
             document.getElementById('search-nop').addEventListener('keypress', e => {
                 if (e.key === 'Enter') doSearch();
             });
             document.getElementById('btn-zoom-all').addEventListener('click', resetView);
+
             document.getElementById('filter-klaster').addEventListener('change', e => {
                 const val = e.target.value;
-                const filtered = val === 'all' ? rawGeojsonData.features : rawGeojsonData.features.filter(
-                    f => String(f.properties.klaster) === val);
+                const filtered = val === 'all' ? rawGeojsonData.features :
+                    rawGeojsonData.features.filter(f => String(f.properties.klaster) === val);
                 updateMapData(filtered, true);
             });
+
             document.getElementById('select-basemap').addEventListener('change', e => {
                 Object.values(basemaps).forEach(l => map.removeLayer(l));
                 map.addLayer(basemaps[e.target.value]);
