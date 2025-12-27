@@ -47,6 +47,13 @@
                         </a>
                     @endif
                 </form>
+                <button onclick="openCreateModal()"
+                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Tambah Lahan</span>
+                </button>
             </div>
         </div>
 
@@ -158,7 +165,8 @@
                                         <button
                                             onclick="openDeleteModal('{{ $item->nop }} - {{ $item->nama }}', '{{ route('admin.lahan.delete', $item->id) }}')"
                                             class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                                 </path>
@@ -317,6 +325,100 @@
             </div>
         </div>
     </div>
+    <div id="createModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="relative min-h-screen flex items-center justify-center p-6">
+            <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden">
+
+                <div class="bg-green-600 px-8 py-5 border-b-2 border-green-700">
+                    <h3 class="text-xl font-bold text-white tracking-wide">Tambah Data Lahan Baru</h3>
+                    <p class="text-green-100 text-xs mt-1">Inputkan data sesuai dengan data lapangan terbaru.</p>
+                </div>
+
+                <form action="{{ route('lahan.store') }}" method="POST">
+                    @csrf
+                    <div class="p-8 space-y-6">
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
+                                    Nomor Objek Pajak (NOP)
+                                </label>
+                                <input type="text" name="nop" required placeholder="Contoh: 32.01..."
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
+                                    Nama Pemilik Lahan
+                                </label>
+                                <input type="text" name="nama" required placeholder="Nama Lengkap"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
+                                    Luas Lahan (m²)
+                                </label>
+                                <input type="number" name="luas" required min="1" placeholder="Contoh: 2000"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
+                                    Jenis Tanah
+                                </label>
+                                <select name="jenis_tanah" required
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all bg-gray-50/50">
+                                    <option value="" disabled selected>-- Pilih Jenis --</option>
+                                    <option value="1">Aluvial</option>
+                                    <option value="2">Andosol</option>
+                                    <option value="3">Grumosol</option>
+                                    <option value="4">Regosol</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6 items-center">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
+                                    Est. Hasil Panen (Kg)
+                                </label>
+                                <input type="number" name="estimasi_panen" required min="0"
+                                    placeholder="Input Kg"
+                                    class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all font-bold text-green-700 bg-gray-50/50">
+                            </div>
+
+                            <div class="bg-green-50 p-4 rounded-xl border-2 border-dashed border-green-200">
+                                <label
+                                    class="block text-[10px] font-bold text-green-600 uppercase tracking-widest">Kalkulasi
+                                    Otomatis</label>
+                                <div class="text-[11px] font-bold text-green-700 mt-1 uppercase leading-tight">
+                                    Urea, NPK, & Produktivitas
+                                </div>
+                                <span class="text-[9px] text-green-500 leading-tight italic">
+                                    Dihitung otomatis saat disimpan.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-8 py-6 flex justify-end space-x-4 border-t-2 border-gray-200/50">
+                        <button type="button" onclick="closeCreateModal()"
+                            class="px-6 py-3 bg-red-50 text-red-600 border-2 border-red-100 text-sm font-bold rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 active:scale-95">
+                            Batal
+                        </button>
+
+                        <button type="submit"
+                            class="px-10 py-3 bg-green-600 text-white text-sm font-black rounded-xl hover:bg-green-700 hover:shadow-lg active:transform active:scale-95 transition-all uppercase tracking-widest border-b-4 border-green-800">
+                            Simpan Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script>
         // Inisialisasi variabel di dalam fungsi agar tidak error jika elemen belum dimuat
         function openDeleteModal(name, url) {
@@ -333,6 +435,14 @@
         function closeDeleteModal() {
             document.getElementById('deleteModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
+        }
+
+        function openCreateModal() {
+            document.getElementById('createModal').classList.remove('hidden');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.add('hidden');
         }
 
         function openEditModal(data) {
@@ -365,8 +475,10 @@
         window.onclick = function(event) {
             const dModal = document.getElementById('deleteModal');
             const eModal = document.getElementById('editModal');
+            const cModal = document.getElementById('createModal');
             if (event.target == dModal) closeDeleteModal();
             if (event.target == eModal) closeEditModal();
+            if (event.target == cModal) closeCreateModal();
         }
     </script>
 @endsection

@@ -32,6 +32,47 @@ class LahanController extends Controller
         // 5. Baru return view di baris terakhir
         return view('admin.lahan.index', compact('lahan'));
     }
+    public function store(Request $request)
+    {
+        // 1. Validasi Input
+        $request->validate([
+            'nop'            => 'required|string|unique:lahans,nop',
+            'nama'           => 'required|string|max:255',
+            'luas'           => 'required|numeric|min:1',
+            'estimasi_panen' => 'required|numeric|min:0',
+            'jenis_tanah'    => 'required|integer', 
+        ]);
+
+        // 2. Hitung Luas dalam Hektar (1 Ha = 10.000 m2)
+        $luasHa = $request->luas / 10000;
+
+        // 3. Hitung Otomatis Pupuk (Dosis: Urea 275kg/ha & NPK 250kg/ha)
+        $urea = $luasHa * 275;
+        $npk = $luasHa * 250;
+
+        // 4. Hitung Otomatis Produktivitas (Hasil / Luas Ha)
+        $produktivitas = $luasHa > 0 ? ($request->estimasi_panen / $luasHa) : 0;
+
+        // 5. Simpan ke Database
+        Lahan::create([
+            'nop'            => $request->nop,
+            'nama'           => $request->nama,
+            'luas'           => $request->luas,
+            'jenis_tanah'    => $request->jenis_tanah, // Disimpan sebagai integer
+            'estimasi_panen' => $request->estimasi_panen,
+            'produktivitas'  => $produktivitas,
+            'urea'           => $urea,
+            'npk'            => $npk,
+
+            // Kosongkan field spasial & klaster sesuai permintaan
+            'klaster'        => null,
+            'longitude'      => null,
+            'latitude'       => null,
+            'polygon'        => null,
+        ]);
+
+        return redirect()->back()->with('success', 'Data lahan berhasil ditambahkan!');
+    }
     public function update(Request $request, $id)
     {
         $lahan = Lahan::findOrFail($id);

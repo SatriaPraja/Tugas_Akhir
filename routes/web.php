@@ -68,6 +68,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     // Manajemen Lahan
     Route::controller(LahanController::class)->group(function () {
         Route::get('/lahan', 'index')->name('lahan.index');
+        Route::post('lahan/store', [LahanController::class, 'store'])->name('lahan.store');
         Route::put('/lahan/update/{id}', [LahanController::class, 'update'])->name('lahan.update');
         Route::delete('/lahan/delete/{id}', 'destroy')->name('lahan.delete');
     });
