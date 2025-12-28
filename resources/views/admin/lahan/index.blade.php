@@ -451,24 +451,36 @@
 
         function openEditModal(data) {
             const editModal = document.getElementById('editModal');
+
+            // Set Action URL
             document.getElementById('editForm').action = `/admin/lahan/update/${data.id}`;
-            document.getElementById('editNama').value = data.nama;
-            document.getElementById('editNop').value = data.nop;
-            document.getElementById('editLuas').value = data.luas;
-            document.getElementById('editJenis').value = data.jenis_tanah;
-            document.getElementById('editPanen').value = data.estimasi_panen;
+
+            // Set Values dengan proteksi agar tidak muncul "null" atau kosong di input
+            document.getElementById('editNama').value = data.nama ?? '';
+            document.getElementById('editNop').value = data.nop ?? '';
+            document.getElementById('editLuas').value = data.luas ?? 0;
+            document.getElementById('editJenis').value = data.jenis_tanah ?? '';
+            document.getElementById('editPanen').value = data.estimasi_panen ?? 0;
+
+            // Pupuk (Sudah benar menggunakan ?? 0)
             document.getElementById('editUrea').value = data.urea ?? 0;
             document.getElementById('editNpk').value = data.npk ?? 0;
 
+            // Logika Klaster
             const klasterNames = {
                 1: 'Kecil',
                 2: 'Sedang',
                 3: 'Besar'
             };
-            document.getElementById('editKlaster').value = data.klaster;
-            document.getElementById('displayKlaster').innerText = `Kategori: ${klasterNames[data.klaster] || 'N/A'}`;
 
+            const klasterValue = data.klaster ?? '';
+            document.getElementById('editKlaster').value = klasterValue;
+            document.getElementById('displayKlaster').innerText =
+                `Kategori: ${klasterNames[klasterValue] || 'Belum Terklaster'}`;
+
+            // Tampilkan Modal
             editModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Tambahan: agar layar belakang tidak bisa di-scroll
         }
 
         function closeEditModal() {
