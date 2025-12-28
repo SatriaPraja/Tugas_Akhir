@@ -44,14 +44,14 @@ class LahanController extends Controller
         ]);
 
         // 2. Hitung Luas dalam Hektar (1 Ha = 10.000 m2)
-        $luasHa = $request->luas / 10000;   
+        $luasHa = $request->luas / 10000;
 
         // 3. Hitung Otomatis Pupuk (Dosis: Urea 275kg/ha & NPK 250kg/ha)
         $urea = round($luasHa * 275, 2);
         $npk  = round($luasHa * 250, 2);
 
         // 4. Hitung Otomatis Produktivitas (Hasil / Luas Ha)
-        $produktivitas = $luasHa > 0 ? ($request->estimasi_panen / $luasHa) : 0;
+        $produktivitas = $luasHa > 0 ? round($request->estimasi_panen / $luasHa) : 0;
 
         // 5. Simpan ke Database
         Lahan::create([
@@ -90,7 +90,7 @@ class LahanController extends Controller
             'npk'   // Kolom baru
         ]));
 
-        return redirect()->back()->with('success', 'Data lahan dan pupuk berhasil diperbarui');
+        return redirect()->back()->with('success', 'new Data lahan dan pupuk berhasil diperbarui');
     }
 
     public function destroy($id)
