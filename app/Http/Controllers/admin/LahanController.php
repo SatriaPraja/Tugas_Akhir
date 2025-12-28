@@ -75,22 +75,29 @@ class LahanController extends Controller
     }
     public function update(Request $request, $id)
     {
+        // 1. Cari data atau gagalkan jika tidak ada
         $lahan = Lahan::findOrFail($id);
 
-        // Tambahkan 'urea' dan 'npk' ke dalam array only()
-        $lahan->update($request->only([
-            'nama',
-            'nop',
-            'luas',
-            'jenis_tanah',
-            'estimasi_panen',
-            'produktivitas', // Tambahkan ini jika di view ada inputnya
-            'klaster',
-            'urea', // Kolom baru
-            'npk'   // Kolom baru
-        ]));
+        // 2. Validasi Input (Ini kunci agar tidak bisa simpan data kosong/spasi)
+        $validatedData = $request->validate([
+            'nama'           => 'required|string|max:255',
+            'nop'            => 'required|string|max:50',
+            'luas'           => 'required|numeric|min:1',
+            'jenis_tanah'    => 'required|string',
+            'estimasi_panen' => 'required|numeric|min:0',
+            'urea'           => 'nullable|numeric|min:0',
+            'npk'            => 'nullable|numeric|min:0',
+            'klaster'        => 'required',
+        ], [
+            // Custom pesan error jika diperlukan
+            'required' => ':attribute tidak boleh kosong atau hanya berisi spasi.',
+            'numeric'  => ':attribute harus berupa angka.',
+        ]);
 
-        return redirect()->back()->with('success', 'new Data lahan dan pupuk berhasil diperbarui');
+        // 3. Update menggunakan data yang sudah divalidasi
+        $lahan->update($validatedData);
+
+        return redirect()->back()->with('success', 'Data lahan dan pupuk berhasil diperbarui');
     }
 
     public function destroy($id)

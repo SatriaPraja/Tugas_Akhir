@@ -241,14 +241,14 @@
                                 <label
                                     class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Nomor
                                     Objek Pajak (NOP)</label>
-                                <input type="text" id="editNop" name="nop"
+                                <input type="text" id="editNop" name="nop" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
                             </div>
                             <div class="space-y-1">
                                 <label
                                     class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Nama
                                     Pemilik Lahan</label>
-                                <input type="text" id="editNama" name="nama"
+                                <input type="text" id="editNama" name="nama" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
                             </div>
                         </div>
@@ -258,14 +258,14 @@
                                 <label
                                     class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Luas
                                     Lahan (m²)</label>
-                                <input type="number" id="editLuas" name="luas"
+                                <input type="number" id="editLuas" name="luas" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
                             </div>
                             <div class="space-y-1">
                                 <label
                                     class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Jenis
                                     Tanah</label>
-                                <input type="text" id="editJenis" name="jenis_tanah"
+                                <input type="text" id="editJenis" name="jenis_tanah" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all bg-gray-50/50">
                             </div>
                         </div>
@@ -283,13 +283,13 @@
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-600 uppercase mb-1">Dosis
                                         Urea</label>
-                                    <input type="number" id="editUrea" name="urea"
+                                    <input type="number" id="editUrea" name="urea" required
                                         class="block w-full border-2 border-blue-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base font-semibold py-2.5 px-4 bg-white shadow-inner">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-green-600 uppercase mb-1">Dosis
                                         NPK</label>
-                                    <input type="number" id="editNpk" name="npk"
+                                    <input type="number" id="editNpk" name="npk" required
                                         class="block w-full border-2 border-green-200 rounded-lg focus:ring-green-500 focus:border-green-500 text-base font-semibold py-2.5 px-4 bg-white shadow-inner">
                                 </div>
                             </div>
@@ -300,7 +300,7 @@
                                 <label
                                     class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">Est.
                                     Hasil Panen (Kg)</label>
-                                <input type="number" id="editPanen" name="estimasi_panen"
+                                <input type="number" id="editPanen" name="estimasi_panen" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-base py-3 px-4 transition-all font-bold text-blue-700 bg-gray-50/50">
                             </div>
                             <div class="bg-gray-50 p-4 rounded-xl border-2 border-dashed border-gray-300">
