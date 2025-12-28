@@ -10,12 +10,20 @@
                 <p class="text-gray-500 mt-1">Kelola informasi klasterisasi, produktivitas, dan koordinat lahan.</p>
             </div>
 
-            <div class="flex flex-col items-end space-y-3">
+            <div class="flex items-center space-x-3">
+                {{-- 1. Tombol Tambah Lahan (Sekarang di paling kiri) --}}
+                <button type="button" onclick="openCreateModal()"
+                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Tambah Lahan</span>
+                </button>
 
+                {{-- 2. Form Filter dan Search --}}
                 <form action="{{ request()->url() }}" method="GET" class="flex items-center space-x-3">
-                    {{-- Tombol Reset/Kembali - Hanya muncul jika ada filter atau pencarian --}}
 
-
+                    {{-- Dropdown Filter --}}
                     <select name="filter_klaster" onchange="this.form.submit()"
                         class="bg-white border border-gray-200 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
                         <option value="">Semua Klaster</option>
@@ -24,6 +32,7 @@
                         <option value="3" {{ request('filter_klaster') == '3' ? 'selected' : '' }}>Besar</option>
                     </select>
 
+                    {{-- Input Search --}}
                     <div class="relative">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari NOP atau Nama..."
@@ -35,6 +44,8 @@
                             </svg>
                         </div>
                     </div>
+
+                    {{-- 3. Tombol Reset (Hanya muncul jika ada filter/search) --}}
                     @if (request('search') || request('filter_klaster'))
                         <a href="{{ request()->url() }}"
                             class="bg-blue-600 text-white p-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center"
@@ -47,13 +58,6 @@
                         </a>
                     @endif
                 </form>
-                <button onclick="openCreateModal()"
-                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    <span>Tambah Lahan</span>
-                </button>
             </div>
         </div>
 
@@ -336,7 +340,7 @@
                     <p class="text-green-100 text-xs mt-1">Inputkan data sesuai dengan data lapangan terbaru.</p>
                 </div>
 
-                <form action="{{ route('lahan.store') }}" method="POST">
+                <form action="{{ route('admin.lahan.store') }}" method="POST">
                     @csrf
                     <div class="p-8 space-y-6">
 
@@ -372,10 +376,10 @@
                                 <select name="jenis_tanah" required
                                     class="block w-full border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 text-base py-3 px-4 transition-all bg-gray-50/50">
                                     <option value="" disabled selected>-- Pilih Jenis --</option>
-                                    <option value="1">Aluvial</option>
-                                    <option value="2">Andosol</option>
-                                    <option value="3">Grumosol</option>
-                                    <option value="4">Regosol</option>
+                                    <option value="1">Aluvial Berpasir (1)</option>
+                                    <option value="2">Grumosol (2)</option>
+                                    <option value="3">Latosol Gelap (3)</option>
+                                    <option value="4">Latosol Putih (4)</option>
                                 </select>
                             </div>
                         </div>

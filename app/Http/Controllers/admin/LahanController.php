@@ -36,19 +36,19 @@ class LahanController extends Controller
     {
         // 1. Validasi Input
         $request->validate([
-            'nop'            => 'required|string|unique:lahans,nop',
+            'nop'            => 'required|string|unique:lahan,nop',
             'nama'           => 'required|string|max:255',
             'luas'           => 'required|numeric|min:1',
             'estimasi_panen' => 'required|numeric|min:0',
-            'jenis_tanah'    => 'required|integer', 
+            'jenis_tanah'    => 'required|integer',
         ]);
 
         // 2. Hitung Luas dalam Hektar (1 Ha = 10.000 m2)
-        $luasHa = $request->luas / 10000;
+        $luasHa = $request->luas / 10000;   
 
         // 3. Hitung Otomatis Pupuk (Dosis: Urea 275kg/ha & NPK 250kg/ha)
-        $urea = $luasHa * 275;
-        $npk = $luasHa * 250;
+        $urea = round($luasHa * 275, 2);
+        $npk  = round($luasHa * 250, 2);
 
         // 4. Hitung Otomatis Produktivitas (Hasil / Luas Ha)
         $produktivitas = $luasHa > 0 ? ($request->estimasi_panen / $luasHa) : 0;
