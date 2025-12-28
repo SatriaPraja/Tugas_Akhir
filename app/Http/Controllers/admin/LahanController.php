@@ -96,6 +96,6 @@ class LahanController extends Controller
     public function destroy($id)
     {
         Lahan::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'new Data berhasil dihapus');
     }
 }
