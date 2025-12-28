@@ -89,12 +89,8 @@
     </div>
 
 
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    ### 2. Logika JavaScript
-
-    ```javascript
     <script>
         const sidebar = document.getElementById('sidebar');
         const openSidebar = document.getElementById('openSidebar'); // Tombol di pojok kiri atas

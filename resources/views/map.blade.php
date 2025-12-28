@@ -249,28 +249,41 @@
             }
 
             // 5. Fungsi Kontrol & Event
-            function doSearch() {
-                const term = document.getElementById('search-nop').value.trim();
-                if (!term) return resetView();
 
-                const filtered = rawGeojsonData.features.filter(f =>
-                    String(f.properties.nop).toLowerCase() === term.toLowerCase()
-                );
-
-                if (filtered.length > 0) {
-                    geojsonLayer.clearLayers();
+            function updateMapData(features, zoomTo) {
+                geojsonLayer.clearLayers();
+                if (features && features.length > 0) {
                     geojsonLayer.addData({
                         type: "FeatureCollection",
-                        features: filtered
+                        features: features
                     });
-                    map.fitBounds(geojsonLayer.getBounds(), {
-                        padding: [100, 100],
+                    if (zoomTo) map.fitBounds(geojsonLayer.getBounds(), {
+                        padding: [50, 50],
                         maxZoom: 18
                     });
-                    geojsonLayer.eachLayer(l => l.openPopup());
+
+                    if (features.length === 1) {
+                        setTimeout(() => {
+                            const layers = geojsonLayer.getLayers();
+                            if (layers.length > 0) layers[0].openPopup();
+                        }, 500);
+                    }
                 } else {
-                    alert('Nomor Objek Pajak (NOP) tidak ditemukan.');
+                    showNotification();
+                    if (rawGeojsonData) updateMapData(rawGeojsonData.features, false);
                 }
+            }
+
+            function doSearch() {
+                const term = document.getElementById('search-nop').value.trim().toLowerCase();
+                if (!term) return resetView();
+
+                const filtered = rawGeojsonData.features.filter(f => {
+                    const nop = String(f.properties.nop || "").toLowerCase();
+                    const nama = String(f.properties.nama || "").toLowerCase();
+                    return nop.includes(term) || nama.includes(term);
+                });
+                updateMapData(filtered, true);
             }
 
             function resetView() {
