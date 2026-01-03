@@ -230,7 +230,7 @@
         </div>
     </div>
 
-    {{-- MODAL CREATE --}}
+
     {{-- MODAL CREATE --}}
     <div id="createModal" class="fixed inset-0 z-50 hidden overflow-y-auto px-4 py-6 sm:px-0">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeCreateModal()"></div>
