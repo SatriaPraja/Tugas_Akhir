@@ -32,14 +32,17 @@
                             <label class="block text-xs font-extrabold text-gray-500 uppercase tracking-wider ml-1">
                                 Jumlah Klaster (Optimal K)
                             </label>
-                            <input type="number" name="k_value" value="3" min="2" max="5" required
-                                class="block w-full border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-lg py-3 px-4 transition-all font-bold text-blue-600">
+
+                            {{-- Input diubah menjadi readonly dan ditambah class bg-gray-50/cursor-not-allowed --}}
+                            <input type="number" name="k_value" value="3" readonly
+                                class="block w-full border-2 border-gray-200 rounded-xl bg-gray-50 text-lg py-3 px-4 transition-all font-bold text-blue-600 cursor-not-allowed focus:outline-none"
+                                title="Nilai K telah dikunci untuk hasil optimal">
 
                             <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-xl">
                                 <p class="text-[11px] text-blue-800 leading-relaxed italic">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    <strong>Rekomendasi:</strong> Nilai <b>K=3</b> (Kecil, Sedang, Besar) adalah yang paling
-                                    optimal untuk data ini.
+                                    <i class="fas fa-lock mr-1"></i>
+                                    <strong>Sistem Terkunci:</strong> Nilai <b>K=3</b> telah ditetapkan sebagai konfigurasi
+                                    terbaik untuk akurasi klasterisasi.
                                 </p>
                             </div>
                         </div>
@@ -55,12 +58,11 @@
                             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg transition-all transform active:scale-95 uppercase tracking-widest border-b-4 border-blue-900 flex items-center justify-center group">
                             <i
                                 class="fas fa-sync-alt mr-2 text-xl group-hover:rotate-180 transition-transform duration-500"></i>
-                            <span id="btn-text">Proses Klasterisasi</span>
+                            <span id="btn-text">Mulai Proses</span>
                         </button>
                     </form>
                 </div>
             </div>
-
             {{-- Card Info & Alur (Kanan) --}}
             <div class="lg:col-span-2 space-y-6">
                 <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
