@@ -23,7 +23,7 @@
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden sticky top-8">
                     <div class="bg-blue-600 px-8 py-5 text-center">
                         <i class="fas fa-brain text-white text-3xl mb-2"></i>
-                        <h3 class="text-xl font-bold text-white uppercase tracking-wider">Konfigurasi AI</h3>
+                        <h3 class="text-xl font-bold text-white uppercase tracking-wider">Konfigurasi Klasterisasi</h3>
                     </div>
 
                     <form action="{{ route('admin.clustering.process') }}" method="POST" class="p-8 space-y-6">
