@@ -3,6 +3,34 @@
 @section('title', 'Manajemen Data Lahan')
 
 @section('content')
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .header-control {
+            height: 44px;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
     <div class="p-8">
         <div class="flex justify-between items-end mb-8">
             <div>
@@ -11,32 +39,57 @@
             </div>
 
             <div class="flex items-center space-x-3">
-                {{-- 1. Tombol Tambah Lahan (Sekarang di paling kiri) --}}
+                {{-- Dropdown Export --}}
+                <div class="relative inline-block text-left" x-data="{ open: false }">
+                    <button @click="open = !open" @click.away="open = false" type="button"
+                        class="header-control inline-flex items-center px-4 bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm">
+                        <i class="fas fa-download mr-2 text-blue-600"></i> Export
+                        <i class="fas fa-chevron-down ml-2 text-[10px] text-gray-400 transition-transform duration-200"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+
+                    {{-- Dropdown Menu --}}
+                    <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="origin-top-right absolute right-0 mt-2 w-48 rounded-2xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-[100] focus:outline-none">
+                        <div class="py-2 px-1">
+                            <a href="{{ route('admin.lahan.export.pdf') }}"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors">
+                                <i class="fas fa-file-pdf mr-3 text-red-500"></i> Download PDF
+                            </a>
+                            <a href="{{ route('admin.lahan.export.csv') }}"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-xl transition-colors">
+                                <i class="fas fa-file-csv mr-3 text-green-500"></i> Download CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tombol Tambah Lahan --}}
                 <button type="button" onclick="openCreateModal()"
-                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all flex items-center space-x-2">
+                    class="header-control bg-green-600 hover:bg-green-700 text-white px-5 rounded-xl font-bold shadow-sm transition-all flex items-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     <span>Tambah Lahan</span>
                 </button>
 
-                {{-- 2. Form Filter dan Search --}}
+                {{-- Form Filter dan Search --}}
                 <form action="{{ request()->url() }}" method="GET" class="flex items-center space-x-3">
-
-                    {{-- Dropdown Filter --}}
                     <select name="filter_klaster" onchange="this.form.submit()"
-                        class="bg-white border border-gray-200 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
+                        class="header-control bg-white border border-gray-200 text-gray-600 text-sm rounded-xl px-4 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
                         <option value="">Semua Klaster</option>
                         <option value="1" {{ request('filter_klaster') == '1' ? 'selected' : '' }}>Kecil</option>
                         <option value="2" {{ request('filter_klaster') == '2' ? 'selected' : '' }}>Sedang</option>
                         <option value="3" {{ request('filter_klaster') == '3' ? 'selected' : '' }}>Besar</option>
                     </select>
 
-                    {{-- Input Search --}}
                     <div class="relative">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari NOP atau Nama..."
-                            class="bg-white border border-gray-200 text-gray-600 text-sm rounded-xl pl-10 pr-4 py-2.5 w-64 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
+                            class="header-control bg-white border border-gray-200 text-gray-600 text-sm rounded-xl pl-10 pr-4 w-64 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm transition-all">
                         <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,11 +98,10 @@
                         </div>
                     </div>
 
-                    {{-- 3. Tombol Reset (Hanya muncul jika ada filter/search) --}}
                     @if (request('search') || request('filter_klaster'))
                         <a href="{{ request()->url() }}"
-                            class="bg-blue-600 text-white p-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center"
-                            title="Kembali ke semua data">
+                            class="header-control w-11 bg-blue-600 text-white rounded-xl transition-all shadow-sm flex items-center justify-center"
+                            title="Reset Filter">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
@@ -112,7 +164,8 @@
 
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600 font-medium">{{ number_format($item->luas) }} m²
+                                <td class="px-6 py-4 text-sm text-gray-600 font-medium">{{ number_format($item->luas) }}
+                                    m²
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">{{ $item->jenis_tanah }}</td>
                                 <td class="px-6 py-4 text-sm text-blue-600 font-bold">
@@ -159,7 +212,8 @@
                                     <div class="flex justify-center space-x-2">
                                         <button onclick="openEditModal({{ json_encode($item) }})"
                                             class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                                                 </path>

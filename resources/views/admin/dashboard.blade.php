@@ -32,6 +32,7 @@
             </p>
             <div class="h-1 w-20 bg-blue-600 mt-2 rounded-full"></div>
         </div>
+        
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {{-- Total Lahan --}}

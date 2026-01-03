@@ -61,6 +61,11 @@
                     <span>Import Lahan</span>
                 </a>
 
+                <a href="{{ route('admin.clustering.index') }}"
+                    class="block px-4 py-3 hover:bg-gray-700 flex items-center {{ request()->routeIs('admin.clustering.*') ? 'bg-gray-700 border-l-4 border-blue-500' : '' }}">
+                    <i class="fas fa-project-diagram mr-2 w-5 text-center"></i>
+                    <span>Proses Klasterisasi</span>
+                </a>
                 <a href="{{ route('admin.account.index') }}"
                     class="block px-4 py-3 hover:bg-gray-700 flex items-center {{ request()->routeIs('admin.account.*') ? 'bg-gray-700 border-l-4 border-blue-500' : '' }}">
                     <i class="fas fa-users-cog mr-2 w-5 text-center"></i>

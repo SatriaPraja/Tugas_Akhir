@@ -10,7 +10,8 @@ use App\Http\Controllers\Admin\LahanController;
 use App\Http\Controllers\Admin\ImportLahanController;
 use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\MapController;
-use App\Http\Controllers\Auth\AuthController; // Pastikan folder Auth sesuai
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\ClusteringController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,8 +70,16 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::controller(LahanController::class)->group(function () {
         Route::get('/lahan', 'index')->name('lahan.index');
         Route::post('/lahan/store', 'store')->name('lahan.store');
-        Route::put('/lahan/update/{id}', [LahanController::class, 'update'])->name('lahan.update');
+        Route::put('/lahan/update/{id}', 'update')->name('lahan.update'); // Diperbaiki agar seragam menggunakan controller grouping
         Route::delete('/lahan/delete/{id}', 'destroy')->name('lahan.delete');
+
+        // Fitur Export Laporan
+        Route::get('/lahan/export-pdf', 'exportPdf')->name('lahan.export.pdf');
+        Route::get('/lahan/export-csv', 'exportCsv')->name('lahan.export.csv');
+    });
+    Route::controller(ClusteringController::class)->group(function () {
+        Route::get('/clustering', 'index')->name('clustering.index');
+        Route::post('/clustering/process', 'process')->name('clustering.process');
     });
     // Route untuk Manajemen CSV
     Route::controller(ImportLahanController::class)->group(function () {
