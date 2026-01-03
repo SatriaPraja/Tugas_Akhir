@@ -109,14 +109,14 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="p-5 rounded-2xl border-2 transition-all"
-                            style="border-color: #f56565; background-color: rgba(245, 101, 101, 0.05);">
+                            style="border-color: #44aa44; background-color: rgba(68, 170, 68, 0.05);">
                             <div class="flex items-center mb-2">
-                                <div class="w-4 h-4 rounded-full mr-2 shadow-sm" style="background-color: #f56565;"></div>
-                                <span class="font-extrabold text-sm" style="color: #f56565;">KLASTER 1</span>
+                                <div class="w-4 h-4 rounded-full mr-2 shadow-sm" style="background-color: #44aa44;"></div>
+                                <span class="font-extrabold text-sm" style="color: #44aa44;">KLASTER 1</span>
                             </div>
-                            <h6 class="text-2xl font-black mb-1" style="color: #f56565;">BESAR</h6>
-                            <p class="text-[11px] text-gray-600 leading-snug">Lahan dengan luas maksimal dan produktivitas
-                                tinggi.</p>
+                            <h6 class="text-2xl font-black mb-1" style="color: #44aa44;">KECIL</h6>
+                            <p class="text-[11px] text-gray-600 leading-snug">Lahan terbatas yang memerlukan perhatian
+                                khusus.</p>
                         </div>
 
                         <div class="p-5 rounded-2xl border-2 transition-all"
@@ -131,14 +131,14 @@
                         </div>
 
                         <div class="p-5 rounded-2xl border-2 transition-all"
-                            style="border-color: #44aa44; background-color: rgba(68, 170, 68, 0.05);">
+                            style="border-color: #f56565; background-color: rgba(245, 101, 101, 0.05);">
                             <div class="flex items-center mb-2">
-                                <div class="w-4 h-4 rounded-full mr-2 shadow-sm" style="background-color: #44aa44;"></div>
-                                <span class="font-extrabold text-sm" style="color: #44aa44;">KLASTER 3</span>
+                                <div class="w-4 h-4 rounded-full mr-2 shadow-sm" style="background-color: #f56565;"></div>
+                                <span class="font-extrabold text-sm" style="color: #f56565;">KLASTER 3</span>
                             </div>
-                            <h6 class="text-2xl font-black mb-1" style="color: #44aa44;">KECIL</h6>
-                            <p class="text-[11px] text-gray-600 leading-snug">Lahan terbatas yang memerlukan perhatian
-                                khusus.</p>
+                            <h6 class="text-2xl font-black mb-1" style="color: #f56565;">BESAR</h6>
+                            <p class="text-[11px] text-gray-600 leading-snug">Lahan dengan luas maksimal dan produktivitas
+                                tinggi.</p>
                         </div>
                     </div>
                 </div>
