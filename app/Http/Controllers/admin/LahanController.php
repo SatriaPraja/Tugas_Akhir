@@ -77,29 +77,44 @@ class LahanController extends Controller
     }
     public function update(Request $request, $id)
     {
-        // 1. Cari data atau gagalkan jika tidak ada
+        // 1. Cari data
         $lahan = Lahan::findOrFail($id);
 
-        // 2. Validasi Input (Ini kunci agar tidak bisa simpan data kosong/spasi)
-        $validatedData = $request->validate([
+        // 2. Validasi Input
+        $request->validate([
             'nama'           => 'required|string|max:255',
             'nop'            => 'required|string|max:50',
             'luas'           => 'required|numeric|min:1',
-            'jenis_tanah'    => 'required|string',
+            'jenis_tanah'    => 'required',
             'estimasi_panen' => 'required|numeric|min:0',
-            'urea'           => 'nullable|numeric|min:0',
-            'npk'            => 'nullable|numeric|min:0',
-            'klaster'        => 'required',
-        ], [
-            // Custom pesan error jika diperlukan
-            'required' => ':attribute tidak boleh kosong atau hanya berisi spasi.',
-            'numeric'  => ':attribute harus berupa angka.',
         ]);
 
-        // 3. Update menggunakan data yang sudah divalidasi
-        $lahan->update($validatedData);
+        // --- LOGIKA PERHITUNGAN ULANG ---
 
-        return redirect()->back()->with('success', 'Data lahan dan pupuk berhasil diperbarui');
+        // 3. Hitung Luas dalam Hektar (1 Ha = 10.000 m2)
+        $luasHa = $request->luas / 10000;
+
+        // 4. Hitung Ulang Pupuk (Dosis tetap: Urea 275kg/ha & NPK 250kg/ha)
+        $urea = round($luasHa * 275, 0);
+        $npk  = round($luasHa * 250, 0);
+
+        // 5. Hitung Ulang Produktivitas (Hasil / Luas Ha)
+        $produktivitas = $luasHa > 0 ? round($request->estimasi_panen / $luasHa) : 0;
+
+        // 6. Update ke Database
+        $lahan->update([
+            'nama'           => $request->nama,
+            'nop'            => $request->nop,
+            'luas'           => $request->luas,
+            'jenis_tanah'    => $request->jenis_tanah,
+            'estimasi_panen' => $request->estimasi_panen,
+            'produktivitas'  => $produktivitas, // Data hasil hitung ulang
+            'urea'           => $urea,          // Data hasil hitung ulang
+            'npk'            => $npk,           // Data hasil hitung ulang
+
+        ]);
+
+        return redirect()->back()->with('success', 'Data lahan, produktivitas, dan dosis pupuk berhasil dihitung ulang dan diperbarui!');
     }
 
     public function destroy($id)
