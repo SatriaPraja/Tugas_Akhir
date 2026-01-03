@@ -58,7 +58,7 @@
                             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg transition-all transform active:scale-95 uppercase tracking-widest border-b-4 border-blue-900 flex items-center justify-center group">
                             <i
                                 class="fas fa-sync-alt mr-2 text-xl group-hover:rotate-180 transition-transform duration-500"></i>
-                            <span id="btn-text">Mulai Proses</span>
+                            <span id="btn-text">Analisis Sekarang</span>
                         </button>
                     </form>
                 </div>
